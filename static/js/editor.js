@@ -76,8 +76,8 @@ const blankItem = kind => kind === 'entry' ? { start: '', end: '', title: '', ro
 const kindOfType = t => (t === 'entries' ? 'entry' : t === 'keyvalue' ? 'kv' : 'list');
 const uid = () => 'a' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
-export function createEditor(host, doc, { onChange = () => {}, onAnnotations = () => {}, onActivate = () => {} } = {}) {
-  const H = makeHelpers(true);
+export function createEditor(host, doc, { editable = true, onChange = () => {}, onAnnotations = () => {}, onActivate = () => {} } = {}) {
+  const H = makeHelpers(editable);
   const R = () => doc.resume;
   let sheet, ro;
 
@@ -145,6 +145,7 @@ export function createEditor(host, doc, { onChange = () => {}, onAnnotations = (
   function highlight(id) { sheet.querySelectorAll('mark.ann').forEach(m => { const on = m.dataset.aid === id; m.classList.toggle('active', on); const a = doc.annotations.find(x => x.id === m.dataset.aid); if (a) m.style.background = a.color + (on ? '99' : '4d'); }); }
   function scrollTo(id) { sheet.querySelector(`mark.ann[data-aid="${id}"]`)?.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
   function removeAnnotation(id) {
+    if (!editable) return;
     const i = doc.annotations.findIndex(a => a.id === id); if (i < 0) return;
     doc.annotations.splice(i, 1); paint(); onAnnotations(false); onChange();
   }
@@ -226,7 +227,7 @@ export function createEditor(host, doc, { onChange = () => {}, onAnnotations = (
   };
   const onClick = e => {
     const act = e.target.closest('[data-act]');
-    if (act) {
+    if (editable && act) {
       const it = act.closest('.item'), p = it.dataset.item, kind = it.dataset.kind, [par, i] = splitPath(p);
       if (act.dataset.act === 'del') { removeAt(par, i); return structural(); }
       if (act.dataset.act === 'add') { insertAt(par, i + 1, blankItem(kind)); return structural(`${par}.${i + 1}`); }
@@ -234,7 +235,7 @@ export function createEditor(host, doc, { onChange = () => {}, onAnnotations = (
       return;
     }
     const add = e.target.closest('[data-add]');
-    if (add) { const par = add.dataset.add + '.items', arr = getAt(R(), par); insertAt(par, arr.length, blankItem(kindOfType(add.dataset.type))); return structural(`${par}.${arr.length - 1}`); }
+    if (editable && add) { const par = add.dataset.add + '.items', arr = getAt(R(), par); insertAt(par, arr.length, blankItem(kindOfType(add.dataset.type))); return structural(`${par}.${arr.length - 1}`); }
     const m = e.target.closest('mark.ann');
     if (m && getSelection().isCollapsed) onActivate(m.dataset.aid, 'mark');
   };
@@ -256,9 +257,12 @@ export function createEditor(host, doc, { onChange = () => {}, onAnnotations = (
     selField = info.f;
     const rects = info.r.getClientRects(), b = rects[0] || info.r.getBoundingClientRect();
     pop.hidden = false;
-    const w = pop.offsetWidth;
-    pop.style.left = Math.max(8, Math.min(innerWidth - w - 8, b.left + b.width / 2 - w / 2)) + 'px';
-    pop.style.top = Math.max(8, b.top - pop.offsetHeight - 10) + 'px';
+    const viewport = window.visualViewport;
+    const left = viewport?.offsetLeft ?? 0, top = viewport?.offsetTop ?? 0;
+    const width = viewport?.width ?? innerWidth, height = viewport?.height ?? innerHeight;
+    const w = pop.offsetWidth, h = pop.offsetHeight;
+    pop.style.left = Math.max(left + 8, Math.min(left + width - w - 8, b.left + b.width / 2 - w / 2)) + 'px';
+    pop.style.top = Math.max(top + 8, Math.min(top + height - h - 8, b.top - h - 10)) + 'px';
   };
   pop.addEventListener('mousedown', e => e.preventDefault());
   pop.addEventListener('click', e => {
@@ -272,12 +276,16 @@ export function createEditor(host, doc, { onChange = () => {}, onAnnotations = (
   });
   const onScroll = () => { if (!pop.hidden) onSel(); };
 
+  if (editable) {
   host.addEventListener('input', onInput);
   host.addEventListener('keydown', onKey);
   host.addEventListener('paste', onPaste);
-  host.addEventListener('click', onClick);
   document.addEventListener('selectionchange', onSel);
   document.addEventListener('scroll', onScroll, true);
+  window.visualViewport?.addEventListener('resize', onScroll);
+  window.visualViewport?.addEventListener('scroll', onScroll);
+  }
+  host.addEventListener('click', onClick);
 
   render();
   return {
@@ -286,6 +294,7 @@ export function createEditor(host, doc, { onChange = () => {}, onAnnotations = (
     destroy() {
       ro?.disconnect(); pop.remove();
       document.removeEventListener('selectionchange', onSel); document.removeEventListener('scroll', onScroll, true);
+      window.visualViewport?.removeEventListener('resize', onScroll); window.visualViewport?.removeEventListener('scroll', onScroll);
     },
   };
 }
