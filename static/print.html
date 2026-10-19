@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><title>print</title>
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/tpl-navy.css">
+<style>
+  @page { size: A4; margin: 12.5mm 14.3mm 12.5mm; }
+  html, body { margin: 0; background: #fff; }
+  .sheet { width: auto; }
+  mark.ann { color: inherit; border-radius: 2px; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  mark.ann sup { font-size: 8px; font-weight: 700; margin-left: 1px; color: #8a5a00; }
+  .notes { break-before: page; font-family: "RS Sans", "Noto Sans CJK SC", sans-serif; font-size: 12px; color: #1b1f27; }
+  .notes h2 { font-size: 16px; color: #2a4482; border-bottom: 2px solid #2a4482; padding-bottom: 3px; letter-spacing: .08em; }
+  .notes li { margin: 0 0 10px; line-height: 1.6; }
+  .notes q { color: #5b6271; }
+  @media screen { body { width: 794px; padding: 46px 54px; box-sizing: border-box; } }
+</style></head>
+<body><div class="sheet" id="sheet"></div>
+<script type="module">
+  import { makeHelpers, wrapOffsets, anchor } from './js/editor.js';
+  import { getTemplate } from './js/templates/index.js';
+  import { esc } from './js/md.js';
+  const q = new URLSearchParams(location.search);
+  const doc = await (await fetch('/api/docs/' + q.get('id'))).json();
+  const tpl = getTemplate(doc.template);
+  const sheet = document.getElementById('sheet');
+  sheet.innerHTML = tpl.render(doc.resume, makeHelpers(false));
+  if (q.get('ann') === '1' && doc.annotations?.length) {
+    const used = [];
+    for (const a of doc.annotations) {
+      const el = a.path && sheet.querySelector(`[data-path="${a.path}"]`);
+      if (!el || !anchor(el, a)) continue;
+      const ms = wrapOffsets(el, a.start, a.end, a.id);
+      if (!ms.length) continue;
+      used.push(a);
+      ms.forEach(m => { m.style.background = a.color + '55'; m.style.boxShadow = `inset 0 -1.5px 0 ${a.color}`; });
+      ms[ms.length - 1].insertAdjacentHTML('beforeend', `<sup>${used.length}</sup>`);
+    }
+    if (used.length) sheet.insertAdjacentHTML('beforeend', `<div class="notes"><h2>批注</h2><ol>${used.map(a => `<li><q>${esc(a.quote)}</q><br>${esc(a.note || '（未填写）')}</li>`).join('')}</ol></div>`);
+  }
+  await document.fonts.ready;
+  window.__READY__ = true;
+</script></body></html>

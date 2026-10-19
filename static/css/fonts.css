@@ -1,0 +1,4 @@
+@font-face { font-family: "RS Sans"; font-weight: 400; font-display: swap; src: local("Noto Sans CJK SC"), local("NotoSansCJKsc-Regular"), local("Source Han Sans SC"), url(../fonts/NotoSansSC-Regular.woff2) format("woff2"); }
+@font-face { font-family: "RS Sans"; font-weight: 700; font-display: swap; src: local("Noto Sans CJK SC Bold"), local("NotoSansCJKsc-Bold"), local("Source Han Sans SC Bold"), url(../fonts/NotoSansSC-Bold.woff2) format("woff2"); }
+@font-face { font-family: "RS Serif"; font-weight: 700; font-display: swap; src: local("Noto Serif CJK SC Bold"), local("NotoSerifCJKsc-Bold"), local("Source Han Serif SC Bold"), url(../fonts/NotoSerifSC-Bold.woff2) format("woff2"); }
+@font-face { font-family: "RS Serif"; font-weight: 400; font-display: swap; src: local("Noto Serif CJK SC"), local("NotoSerifCJKsc-Regular"), local("Source Han Serif SC"), url(../fonts/NotoSerifSC-Regular.woff2) format("woff2"); }

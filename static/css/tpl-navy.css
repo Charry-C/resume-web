@@ -1,0 +1,34 @@
+/* 「墨蓝」template — A4 = 794 × 1123 CSS px */
+.tpl-navy {
+  --nv: #2a4482; --nv-ink: #1b1f27; --nv-sub: #5b6271;
+  font-family: "RS Sans", "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 12.6px; line-height: 1.68; color: var(--nv-ink);
+  letter-spacing: .01em; text-align: justify; text-justify: inter-ideograph;
+  font-kerning: normal; -webkit-font-smoothing: antialiased;
+}
+.tpl-navy b { font-weight: 700; color: #0e1117; }
+.nv-head { margin-bottom: 14px; }
+.nv-name-row { display: flex; align-items: baseline; gap: 14px; }
+.nv-name { font-size: 27px; font-weight: 700; letter-spacing: .12em; color: var(--nv); line-height: 1.25; }
+.nv-title { font-size: 14px; color: var(--nv-sub); letter-spacing: .04em; }
+.nv-contact { margin-top: 4px; color: var(--nv-sub); font-size: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 0 10px; }
+.nv-contact .dot { width: 3px; height: 3px; border-radius: 50%; background: #b3b8c3; display: inline-block; }
+.nv-summary { display: block; margin-top: 6px; color: #3a404c; }
+.nv-sec { margin-top: 12px; }
+.nv-sec:first-child { margin-top: 0; }
+.nv-h { margin: 0 0 7px; padding-bottom: 3px; font-size: 16px; font-weight: 700; color: var(--nv); letter-spacing: .08em;
+  border-bottom: 2px solid var(--nv); line-height: 1.45; break-after: avoid; }
+.nv-entry { margin-bottom: 8px; break-inside: avoid-page; }
+.nv-entry-head { display: grid; grid-template-columns: 1fr auto 1fr; align-items: baseline; gap: 12px; font-weight: 700; font-size: 13.2px; margin-bottom: 1px; }
+.nv-entry-head.no-title { grid-template-columns: 1fr 1fr; }
+.nv-date { white-space: nowrap; font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+.nv-date .dash { margin: 0 1px; }
+.nv-org { text-align: center; }
+.nv-role { text-align: right; }
+.nv-detail { margin: 0; }
+.nv-detail .lbl, .nv-kv .lbl { font-weight: 700; }
+.nv-detail .colon, .nv-kv .colon { font-weight: 700; }
+.nv-bullets, .nv-kv { list-style: none; margin: 4px 0 0; padding: 0; }
+.nv-bullets > li, .nv-kv > li { position: relative; padding-left: 15px; margin: 0 0 4px; }
+.nv-bullets > li::before, .nv-kv > li::before { content: ""; position: absolute; left: 2px; top: .72em; width: 5px; height: 5px; border-radius: 50%; background: var(--nv-ink); }
+.nv-kv > li { margin-bottom: 1px; }

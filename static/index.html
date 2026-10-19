@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>简 · Resume Studio</title>
+<link rel="icon" href="favicon.svg">
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/tpl-navy.css">
+</head>
+<body>
+<div id="app"></div>
+
+<!-- settings modal -->
+<dialog id="settings" class="modal">
+  <form method="dialog" class="modal-card" id="settingsForm">
+    <header>
+      <div class="eyebrow">设置</div>
+      <h3>模型密钥</h3>
+      <p class="muted">密钥只保存在本机服务端的 <code>.env</code> 文件里，不会写进浏览器。</p>
+    </header>
+    <div class="field">
+      <label>通义千问 · DashScope API Key <span class="pill" data-k="dashscope"></span></label>
+      <input name="dashscope_key" type="password" autocomplete="off" placeholder="sk-…">
+      <div class="row2">
+        <label class="sub">识别模型</label>
+        <input name="qwen_model" list="qwenModels" placeholder="qwen3.6-plus">
+        <datalist id="qwenModels"><option value="qwen3.6-plus"><option value="qwen3-vl-plus"><option value="qwen-vl-max"></datalist>
+      </div>
+    </div>
+    <div class="field">
+      <label>DeepSeek API Key <span class="pill" data-k="deepseek"></span></label>
+      <input name="deepseek_key" type="password" autocomplete="off" placeholder="sk-…">
+      <div class="row2">
+        <label class="sub">结构化模型</label>
+        <input name="deepseek_model" placeholder="deepseek-chat">
+      </div>
+    </div>
+    <footer>
+      <button value="cancel" class="btn ghost" formnovalidate>取消</button>
+      <button id="saveSettings" value="save" class="btn primary">保存</button>
+    </footer>
+  </form>
+</dialog>
+
+<div id="toast" class="toast" hidden></div>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
